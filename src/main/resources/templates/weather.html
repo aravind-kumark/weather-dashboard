@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+</head>
+<body>
+    <div class="weather-bg">
+        <div class="clouds"></div>
+        <div class="stars"></div>
+    </div>
+
+    <div class="container">
+        <div class="search-container">
+            <form action="/weather" method="get">
+                <input type="text" name="city" placeholder="Enter city name..." required>
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+        
+        <h1 class="animated-title">Weather Dashboard</h1>
+        
+        <!-- Error message display -->
+        <div class="error-message" th:if="${error != null}">
+            <p th:text="${error}"></p>
+        </div>
+        
+        <div class="weather-container fade-in" th:if="${weather != null}">
+            <div class="location-card">
+                <h2 th:text="${weather.location.name + ', ' + weather.location.country}" class="city-name"></h2>
+            </div>
+            
+            <div class="current-weather">
+                <div class="weather-icon-wrapper">
+                    <img th:if="${weather.current.condition.icon != null}" 
+                         th:src="${'https:' + weather.current.condition.icon}" 
+                         alt="Weather Icon" class="weather-icon">
+                </div>
+                
+                <div class="temperature">
+                    <span class="temp-value" th:text="${weather.current.temp_c}"></span>
+                    <span class="temp-unit">°C</span>
+                </div>
+                
+                <div class="condition-text">
+                    <span th:text="${weather.current.condition.text}"></span>
+                </div>
+                
+                <div class="weather-details">
+                    <div class="detail-item">
+                        <i class="fas fa-wind"></i>
+                        <span>Wind</span>
+                        <span class="value" th:text="${weather.current.wind_kph + ' km/h'}"></span>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <i class="fas fa-tint"></i>
+                        <span>Humidity</span>
+                        <span class="value" th:text="${weather.current.humidity + '%'}"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 5-Day Forecast Section (Placeholder) -->
+            <div class="forecast-section">
+                <h3>5-Day Forecast</h3>
+                <div class="forecast-container">
+                    <!-- Day 1 (Tomorrow) -->
+                    <div class="forecast-day">
+                        <div class="day">Tomorrow</div>
+                        <i class="forecast-icon fas fa-cloud-sun"></i>
+                        <div class="forecast-temp">32°C</div>
+                    </div>
+                    
+                    <!-- Day 2 -->
+                    <div class="forecast-day">
+                        <div class="day">Wed</div>
+                        <i class="forecast-icon fas fa-cloud"></i>
+                        <div class="forecast-temp">30°C</div>
+                    </div>
+                    
+                    <!-- Day 3 -->
+                    <div class="forecast-day">
+                        <div class="day">Thu</div>
+                        <i class="forecast-icon fas fa-cloud-showers-heavy"></i>
+                        <div class="forecast-temp">29°C</div>
+                    </div>
+                    
+                    <!-- Day 4 -->
+                    <div class="forecast-day">
+                        <div class="day">Fri</div>
+                        <i class="forecast-icon fas fa-sun"></i>
+                        <div class="forecast-temp">33°C</div>
+                    </div>
+                    
+                    <!-- Day 5 -->
+                    <div class="forecast-day">
+                        <div class="day">Sat</div>
+                        <i class="forecast-icon fas fa-cloud-sun"></i>
+                        <div class="forecast-temp">31°C</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="no-data fade-in" th:if="${weather == null and error == null}">
+            <p>Enter a city name to get weather information</p>
+            <i class="fas fa-cloud-sun-rain"></i>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Powered by Weather API | &copy; 2025 Weather Dashboard</p>
+    </footer>
+    
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate title
+            anime({
+                targets: '.animated-title',
+                opacity: [0, 1],
+                translateY: [50, 0],
+                easing: 'easeOutExpo',
+                duration: 1200,
+                delay: 300
+            });
+            
+            // Animate search container
+            anime({
+                targets: '.search-container',
+                opacity: [0, 1],
+                translateY: [-30, 0],
+                easing: 'easeOutExpo',
+                duration: 1000,
+                delay: 100
+            });
+            
+            // Animate weather container elements
+            if (document.querySelector('.weather-container')) {
+                anime({
+                    targets: '.location-card',
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    easing: 'easeOutExpo',
+                    duration: 800,
+                    delay: 500
+                });
+                
+                anime({
+                    targets: '.current-weather',
+                    opacity: [0, 1],
+                    translateY: [30, 0],
+                    easing: 'easeOutExpo',
+                    duration: 800,
+                    delay: 700
+                });
+                
+                anime({
+                    targets: '.forecast-section',
+                    opacity: [0, 1],
+                    translateY: [40, 0],
+                    easing: 'easeOutExpo',
+                    duration: 800,
+                    delay: 900
+                });
+                
+                // Staggered animation for forecast days
+                anime({
+                    targets: '.forecast-day',
+                    opacity: [0, 1],
+                    translateY: [20, 0],
+                    easing: 'easeOutExpo',
+                    duration: 500,
+                    delay: anime.stagger(100, {start: 1100})
+                });
+                
+                // Weather icon pulse animation
+                anime({
+                    targets: '.weather-icon',
+                    scale: [0.9, 1],
+                    opacity: [0.8, 1],
+                    easing: 'easeInOutSine',
+                    duration: 1500,
+                    direction: 'alternate',
+                    loop: true
+                });
+            }
+            
+            // Create moving clouds animation
+            createClouds();
+            
+            // Create animated stars background
+            createStars();
+        });
+        
+        // Function to create animated clouds
+        function createClouds() {
+            const cloudContainer = document.querySelector('.clouds');
+            const numberOfClouds = 8;
+            
+            for (let i = 0; i < numberOfClouds; i++) {
+                const cloud = document.createElement('div');
+                cloud.classList.add('cloud');
+                
+                // Random positioning and sizes
+                const size = Math.random() * 100 + 50;
+                const posTop = Math.random() * 100;
+                const opacity = Math.random() * 0.6 + 0.3;
+                const duration = Math.random() * 30000 + 30000;
+                
+                cloud.style.width = size + 'px';
+                cloud.style.height = size/2 + 'px';
+                cloud.style.top = posTop + '%';
+                cloud.style.opacity = opacity;
+                cloud.style.animationDuration = duration + 'ms';
+                cloud.style.animationDelay = (Math.random() * 10000) + 'ms';
+                
+                cloudContainer.appendChild(cloud);
+            }
+        }
+        
+        // Function to create animated stars
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            const numberOfStars = 100;
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                const size = Math.random() * 3 + 1;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = posX + '%';
+                star.style.top = posY + '%';
+                star.style.animationDelay = (Math.random() * 5) + 's';
+                
+                starsContainer.appendChild(star);
+            }
+        }
+    </script>
+</body>
+</html>
