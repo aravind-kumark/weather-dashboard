@@ -17,3 +17,7 @@ Built using Spring Boot for backend and integrates with a weather API.
 Technologies Used
 
 Backend: Java, Spring Boot, REST API
+
+
+PREVIEW
+![image](https://github.com/user-attachments/assets/c4495870-50de-4c33-b4e0-09f57ac6c644)
